@@ -7109,17 +7109,11 @@ let
       };
     };
   };
-in
-{
-  "popcorn-desktop-https://github.com/popcorn-official/popcorn-desktop/archive/be800aa98cb9ef16f7e00737bbc51ba69204ed8f.tar.gz" = nodeEnv.buildNodePackage {
+  args = {
     name = "Popcorn-Time";
     packageName = "Popcorn-Time";
     version = "0.3.10";
-    src = fetchurl {
-      name = "Popcorn-Time-0.3.10.tar.gz";
-      url = https://codeload.github.com/popcorn-official/popcorn-desktop/tar.gz/be800aa98cb9ef16f7e00737bbc51ba69204ed8f;
-      sha256 = "4b02c6f4249bc96b59652920bc53b316e2f9cb4f1e278bfca3c1e5a884057fc7";
-    };
+    src = ./.;
     dependencies = [
       sources."TorrentCollection-0.0.2"
       sources."abab-1.0.4"
@@ -8312,4 +8306,9 @@ in
     production = true;
     bypassCache = false;
   };
+in
+{
+  tarball = nodeEnv.buildNodeSourceDist args;
+  package = nodeEnv.buildNodePackage args;
+  shell = nodeEnv.buildNodeShell args;
 }
