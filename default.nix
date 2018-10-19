@@ -59,10 +59,10 @@ in (import ./node {
   ];
 
   preRebuild = ''
+    patch -p1 < ${./patches/ext-player.patch}
+    patch -p1 < ${./patches/streamer.patch}
     cp --no-preserve=mode -r ${bowerComponents}/bower_components/. src/app/vendor/
-    rm       node_modules/bower/bin/bower
-    touch    node_modules/bower/bin/bower
-    chmod +x node_modules/bower/bin/bower
+    > node_modules/bower/bin/bower
   '';
 
   postInstall = ''
