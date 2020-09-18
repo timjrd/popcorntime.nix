@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-bower2nix bower.json default.nix
