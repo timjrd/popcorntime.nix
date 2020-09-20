@@ -1,4 +1,6 @@
 # Popcorn Time package for NixOS
+**DISCLAIMER: Use this package at your own risk. You might want to use a sandbox.**
+
 
 This is a Nix package of the development branch of [popcorn-official/popcorn-desktop](https://github.com/popcorn-official/popcorn-desktop). It has been tested on NixOS 18.09.
 
