@@ -5,6 +5,6 @@ let
   };
 in fetch {
   url = https://github.com/NixOS/nixpkgs-channels;
-  rev = "c06f5302"; # nixos-18.09 on Oct 15, 2018
-  sha256 = "01fnr797a6iv3cy8gmddmm5gdlrijjdm66y9v14jai3np8fx1nyz";
+  rev = "faf5bdea"; # nixos-20.03 on Sep 17, 2020
+  sha256 = "1sgfyxi4wckivnbniwmg4l6n9v5z6v53c5467d7k7pr2h6nwssfn";
 }

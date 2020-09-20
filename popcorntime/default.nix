@@ -1,47 +1,33 @@
-{ pkgs, system, fetchurl, unzip
+{ pkgs, fetchurl, unzip
 , callPackage, writeShellScriptBin, makeWrapper
-, nodePackages, buildBowerComponents
-, nwjs, phantomjs2 }:
+, nodePackages, nwjs, phantomjs2 }:
 
 with callPackage ./src.nix {}; let
 
   bundle = "$out/usr/share/${pname}";
 
-  bowerComponents = buildBowerComponents {
-    inherit src;
-    name = pname;
-    generated = ./bower;
-  };
+  expectedNwjsVersion = "0.44.5";
 
-  nwjsPath = "cache/0.18.6-sdk/linux64/";
-  nwjsVersion = "0.31.5";
-  nwjs' = nwjs.overrideAttrs (x: let
-    ffmpeg = fetchurl {
-      url = "https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/${nwjsVersion}/${nwjsVersion}-linux-x64.zip";
-      sha256 = "1p1y7yvia8d5ayqr61kki03k4papgbjl4ky8ffjz2g8zsl665x67";
+  nwjs' = nwjs.overrideAttrs (x: {
+    ffmpegPrebuilt = fetchurl {
+      url = "https://github.com/iteufel/nwjs-ffmpeg-prebuilt/releases/download/${x.version}/${x.version}-linux-x64.zip";
+      sha256 = "1ch14s80p4dpwkhwa831kqy4j7m55v1mdxvq0bdaa5jpd7c75mbk";
     };
-  in {
-    version = nwjsVersion;
-    src = fetchurl {
-      url = "https://dl.nwjs.io/v${nwjsVersion}/nwjs-v${nwjsVersion}-linux-x64.tar.gz";
-      sha256 = "1g0i2g1jlkp50616ng97ir7avff9w81z8x5gm86vp4az1lm672k0";
-    };
-    phases = ["unpackPhase" "patchPhase" "installPhase"];
-    patchPhase = ''(
+    patchPhase = ''
       cd lib
-      ${unzip}/bin/unzip -o ${ffmpeg}
-    )'';
+      ${unzip}/bin/unzip -o $ffmpegPrebuilt
+      ${x.patchPhase or ""}
+    '';
   });
 
-in (import ./node {
-
+in (import ./node/default.nix {
   inherit pkgs;
-  system = system;
-
 }).package.override (x: {
 
   inherit src;
   name = pname;
+
+  production = true;
 
   buildInputs = x.buildInputs ++ [
     (writeShellScriptBin "guppy" "true")
@@ -55,13 +41,12 @@ in (import ./node {
 
   preRebuild = ''
     patch -p1 < ${./ext-player.patch}
-    cp --no-preserve=mode -r ${bowerComponents}/bower_components/. src/app/vendor/
-    > node_modules/bower/bin/bower
   '';
 
   postInstall = ''
-    mkdir -p ${nwjsPath}
-    cp --no-preserve=mode -r ${nwjs'}/share/nwjs/. ${nwjsPath}
+    cache=cache/${expectedNwjsVersion}-sdk/linux64/
+    mkdir -p $cache
+    cp --no-preserve=mode -r ${nwjs'}/share/nwjs/. $cache
 
     gulp build
 

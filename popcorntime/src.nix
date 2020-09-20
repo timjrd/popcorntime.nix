@@ -1,10 +1,11 @@
 { fetchFromGitHub }: rec {
   pname = "popcorntime";
-  version = "be800aa9";
+  version = "0.4.4";
+  name = "${pname}-${version}";
   src = fetchFromGitHub {
     owner = "popcorn-official";
     repo = "popcorn-desktop";
-    rev = version;
-    sha256 = "05wpm6hvxza85lcfgwzi0alfmc2gnhz8fs8jsdvbnv5lyys53vw7";
+    rev = "v${version}";
+    sha256 = "11difp6gjj8l21jhmjdx7a01g67n4s578ydll17s33jv4kpsbxf9";
   };
 }
